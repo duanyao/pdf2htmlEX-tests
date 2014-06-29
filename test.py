@@ -23,8 +23,6 @@ FILE_PATH = os.path.join(os.getcwd(), 'files')
 
 class Test:
     def process(self, item):
-        if type(item) is str:
-            item = { 'file':item }
         fn = item['file']
         pdf_fn = fn + '.pdf'
         html_fn = fn + '.html'
@@ -60,17 +58,19 @@ class Test:
             #print rms
             
 
-    def run(self, op):
+    def run(self, op, fn):
         self.op = op
         if op == 'test':
             self.temp_dir = tempfile.mkdtemp()
         for item in manifest:
-            self.process(item)
+            if fn == '' or item['file'] == fn:
+                self.process(item)
         if op == 'test':
             shutil.rmtree(self.temp_dir)
 
 if __name__ == '__main__':
-    op = 'test'
-    if len(sys.argv) > 1 and sys.argv[1] == 'gen':
-        op = 'gen'
-    Test().run(op)
+    op = sys.argv[1]
+    fn = ''
+    if len(sys.argv) > 2:
+        fn = sys.argv[2]
+    Test().run(op, fn)

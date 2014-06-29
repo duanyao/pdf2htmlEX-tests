@@ -6,6 +6,13 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 - wkhtmltoimage
 - python2
 
+### Usage of `test.py`
+
+- `./test.py test` - run all the tests
+- `./test.py test fn` - run the test with file `fn`
+- `./test.py gen` - generate reference images for all tests
+- `./test.py gen fn` - generate reference images for file `fn`
+
 ### Guidelines for test PDF files
 
 - Make sure you have the proper copyrights.
@@ -15,3 +22,4 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 - Minimized, removed unnecessary elements.
 - Set proper parameters for cropping in `html2png_args`.
 - [Optional] Include the source files.
+
