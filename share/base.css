@@ -17,7 +17,7 @@
    */
   bottom:0;
   right:0;
-  overflow:hidden; /* we don't want scrollbar shown in the screenshot
+  overflow: hidden; /* we don't want scrollbar shown in the screenshot */
 }
 /* Part 2: Page Elements: Modify with caution
  * The followings are base classes, some of which are meant to be override by PDF specific classes
@@ -70,22 +70,6 @@
   -moz-user-select:none;
   -webkit-user-select:none;
   user-select:none;
-}
-@media print {
-  .pf {
-    margin:0;
-    box-shadow:none;
-    page-break-after:always;
-    page-break-inside:avoid;
-  }
-  @-moz-document url-prefix() {
-    /* fix page truncation for FireFox */
-    .pf {
-      overflow:visible;
-      border:1px solid #FFFFFF;
-    }
-    .pc {overflow:visible;}
-  }
 }
 .c { /* clip box */
   position:absolute;
