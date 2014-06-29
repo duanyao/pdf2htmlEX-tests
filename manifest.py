@@ -1,6 +1,6 @@
 manifest = [
   {
-    'file': '1',
+    'file': 'basic_text',
     'html2png_args': '--crop-x 100 --crop-y 150 --crop-w 220 --crop-h 260'
   },
   {
