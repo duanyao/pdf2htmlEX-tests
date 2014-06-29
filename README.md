@@ -5,6 +5,7 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 - pdf2htmlEX (of course)
 - wkhtmltoimage
 - python2
+- Python Imaging Library
 
 ### Usage of `test.py`
 
