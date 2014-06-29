@@ -14,3 +14,4 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 - Grayscale only, unless the test case is about colors.
 - Minimized, removed unnecessary elements.
 - Set proper parameters for cropping in `html2png_args`.
+- [Optional] Include the source files.
