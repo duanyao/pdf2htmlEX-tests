@@ -1,0 +1,35 @@
+# pdf2htmlEX manifest 
+# Copyright (C) 2012,2013 Lu Wang <coolwanglu@gmail.com>
+"""
+<!DOCTYPE html>
+<!-- Created by pdf2htmlEX (https://github.com/coolwanglu/pdf2htmlex) -->
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="generator" content="pdf2htmlEX">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+"""
+
+#############
+# Styles 
+# base CSS styles - Do not modify
+@base.css
+# fancy CSS styles - Optional
+@fancy.css
+# PDF specific CSS styles - Do not modify
+$css
+
+"""
+<title></title>
+</head>
+<body>
+<div id="page-container">
+"""
+$pages
+"""
+</div>
+</body>
+</html>
+"""
+
+# MANIFEST END
