@@ -16,7 +16,7 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 ### Guidelines for test PDF files
 
 - Make sure you have the proper copyrights.
-- Using meaning file names.
+- Using meaningful file names.
 - One page only.
 - Grayscale only, unless the test case is about colors.
 - Minimized, removed unnecessary elements.
