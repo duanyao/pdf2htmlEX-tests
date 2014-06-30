@@ -19,10 +19,10 @@ wkhtmltoimage_ARGS=' '.join([
     '--quiet'
 ])
 
-FILE_PATH = os.path.join(os.getcwd(), 'files')
+INPUT_FILE_PATH = os.path.join(os.getcwd(), 'files')
 
 class Test:
-    def process(self, item):
+    def convert_file(self, item):
         fn = item['file']
         pdf_fn = fn + '.pdf'
         html_fn = fn + '.html'
@@ -32,41 +32,52 @@ class Test:
         if 'pdf2html_args' in item:
             pdf2html_args += ' ' + item['pdf2htmlEX_args']
 
-        if self.op == 'gen':
-            os.system('pdf2htmlEX ' + pdf2htmlEX_args + ' ' + os.path.join(FILE_PATH, pdf_fn) + ' --dest-dir ' + FILE_PATH + ' ' + html_fn)
+        os.system('pdf2htmlEX ' + pdf2htmlEX_args 
+            + ' ' + os.path.join(INPUT_FILE_PATH, pdf_fn) 
+            + ' --dest-dir ' + self.temp_dir + ' ' + html_fn)
 
         wkhtmltoimage_args = wkhtmltoimage_ARGS
         if 'html2png_args' in item:
             wkhtmltoimage_args += ' ' + item['html2png_args']
 
-        if self.op == 'test':
-            dest_dir = self.temp_dir
-        else:
-            dest_dir = FILE_PATH
-        os.system('wkhtmltoimage ' + wkhtmltoimage_args + ' ' + os.path.join(FILE_PATH, html_fn) + ' ' + os.path.join(dest_dir, image_fn))
+        os.system('wkhtmltoimage ' + wkhtmltoimage_args 
+            + ' ' + os.path.join(self.temp_dir, html_fn) 
+            + ' ' + os.path.join(
+                (self.temp_dir if self.op == 'test' else INPUT_FILE_PATH),
+                image_fn))
 
+    def process(self, item):
+        self.convert_file(item)
         if self.op == 'test':
-            original_img = Image.open(os.path.join(FILE_PATH, image_fn))
+            image_fn = item['file'] + '.png'
+            original_img = Image.open(os.path.join(INPUT_FILE_PATH, image_fn))
             new_img = Image.open(os.path.join(self.temp_dir, image_fn))
             
-            ImageChops.difference(original_img, new_img).getbbox() is None
+            return ImageChops.difference(original_img, new_img).getbbox() is None
 
-            #h = ImageChops.difference(original_img, new_img).histogram()
-            #rms = math.sqrt(reduce(operator.add,
-            #    map(lambda h, i: h*(i**2), h, range(256))
-            #    ) / (float(original_img.size[0]) * original_img.size[1]))
-            #print rms
-            
+    def summary(self, failed):
+        if len(failed) == 0:
+            print 'All tests passed.'
+            return
+
+        print len(failed), 'tests' if len(failed) > 1 else 'test', 'failed:'
+        for fn in failed:
+            print fn
 
     def run(self, op, fn):
         self.op = op
-        if op == 'test':
-            self.temp_dir = tempfile.mkdtemp()
+        self.temp_dir = tempfile.mkdtemp()
+
+        failed = []
         for item in manifest:
             if fn == '' or item['file'] == fn:
-                self.process(item)
-        if op == 'test':
-            shutil.rmtree(self.temp_dir)
+                if not self.process(item):
+                    failed.append(item['file'])
+
+        if self.op == 'test':
+            self.summary(failed);
+
+        shutil.rmtree(self.temp_dir)
 
 if __name__ == '__main__':
     op = sys.argv[1]
