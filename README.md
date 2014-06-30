@@ -5,6 +5,7 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 - pdf2htmlEX (of course)
 - wkhtmltoimage
 - python2
+- Python Imaging Library
 
 ### Usage of `test.py`
 
@@ -16,10 +17,10 @@ Test cases for [pdf2htmlEX](https://github.com/coolwanglu/pdf2htmlEX).
 ### Guidelines for test PDF files
 
 - Make sure you have the proper copyrights.
-- Using meaning file names.
-- One page only.
+- Using meaningful file names.
+- One page only, unless the test case is about multiple pages.
 - Grayscale only, unless the test case is about colors.
-- Minimized, removed unnecessary elements.
+- Try your best to remove unnecessary elements.
 - Set proper parameters for cropping in `html2png_args`.
 - [Optional] Include the source files.
 
