@@ -6,5 +6,9 @@ manifest = [
   {
     'file': 'geneve_1564',
     'html2png_args': '--height 1100'
+  },
+  {
+    'file': 'text_visibility',
+    'html2png_args': '--height 1132'
   }
 ]

@@ -9,13 +9,14 @@ pdf2htmlEX_ARGS=' '.join([
     '--external-hint-tool=ttfautohint',
     '--fit-width 800',
     '-l 1',
+    '--correct-text-visibility 1',
 ])
 
 wkhtmltoimage_ARGS=' '.join([
     '-f png',
     '--height 600',
     '--width 800',
-    '--quality 90',
+    '--quality 0',
     '--quiet'
 ])
 
