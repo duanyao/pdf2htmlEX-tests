@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, os, tempfile, shutil, math, operator
+import sys, os, math, operator
 from PIL import Image, ImageChops
 from manifest import manifest
 
@@ -23,38 +23,50 @@ wkhtmltoimage_ARGS=' '.join([
 INPUT_FILE_PATH = os.path.join(os.getcwd(), 'files')
 
 class Test:
-    def convert_file(self, item):
+    def process(self, item):
         fn = item['file']
-        pdf_fn = fn + '.pdf'
-        html_fn = fn + '.html'
-        image_fn = fn + '.png'
+        base_path = os.path.join(INPUT_FILE_PATH, fn)
+        pdf_path = base_path + '.pdf'
+        html_fn = fn + '.new.html'
+        html_path = os.path.join(INPUT_FILE_PATH, html_fn)
+        original_image_path = base_path + '.png'
+        new_image_path = base_path + '.new.png'
+        diff_image_path = base_path + '.diff.png'
+
+        path_removed = [html_path, new_image_path, diff_image_path]
+        passed = True
 
         pdf2htmlEX_args = pdf2htmlEX_ARGS
         if 'pdf2html_args' in item:
             pdf2html_args += ' ' + item['pdf2htmlEX_args']
 
-        os.system('pdf2htmlEX ' + pdf2htmlEX_args 
-            + ' ' + os.path.join(INPUT_FILE_PATH, pdf_fn) 
-            + ' --dest-dir ' + self.temp_dir + ' ' + html_fn)
+        os.system('pdf2htmlEX ' + pdf2htmlEX_args + ' ' + pdf_path + ' --dest-dir ' + INPUT_FILE_PATH + ' ' + html_fn)
 
         wkhtmltoimage_args = wkhtmltoimage_ARGS
         if 'html2png_args' in item:
             wkhtmltoimage_args += ' ' + item['html2png_args']
 
-        os.system('wkhtmltoimage ' + wkhtmltoimage_args 
-            + ' ' + os.path.join(self.temp_dir, html_fn) 
-            + ' ' + os.path.join(
-                (self.temp_dir if self.op == 'test' else INPUT_FILE_PATH),
-                image_fn))
-
-    def process(self, item):
-        self.convert_file(item)
         if self.op == 'test':
-            image_fn = item['file'] + '.png'
-            original_img = Image.open(os.path.join(INPUT_FILE_PATH, image_fn))
-            new_img = Image.open(os.path.join(self.temp_dir, image_fn))
-            
-            return ImageChops.difference(original_img, new_img).getbbox() is None
+            image_path = new_image_path
+        else:
+            image_path = original_image_path
+        os.system('wkhtmltoimage ' + wkhtmltoimage_args + ' ' + html_path + ' ' + image_path)
+
+        if self.op == 'test':
+            original_img = Image.open(original_image_path)
+            new_img = Image.open(new_image_path)
+
+            diff_img = ImageChops.difference(original_img, new_img);
+            passed = diff_img.getbbox() is None
+            if not passed:
+                # http://stackoverflow.com/questions/15721484/saving-in-png-using-pil-library-after-taking-imagechops-difference-of-two-png
+                diff_img.convert('RGB').save(diff_image_path)
+                path_removed = []
+
+        for path in path_removed:
+            if os.path.exists(path):
+                os.remove(path)
+        return passed
 
     def summary(self, failed):
         if len(failed) == 0:
@@ -67,7 +79,6 @@ class Test:
 
     def run(self, op, fn):
         self.op = op
-        self.temp_dir = tempfile.mkdtemp()
 
         failed = []
         for item in manifest:
@@ -78,7 +89,6 @@ class Test:
         if self.op == 'test':
             self.summary(failed);
 
-        shutil.rmtree(self.temp_dir)
 
 if __name__ == '__main__':
     op = sys.argv[1]
